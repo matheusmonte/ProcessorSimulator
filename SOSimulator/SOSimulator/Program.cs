@@ -7,24 +7,24 @@ using System.Threading.Tasks;
 
 namespace SOSimulator
 {
+    #region Process
     public class Process {
         public int duration { get; set; }
         public int Id { get; set; }
-        public Process(int duration) {
-            this.duration = duration;
+        public Process() {
+            
             Random rd = new Random();
             this.Id = rd.Next(0, 100);
+            this.duration = rd.Next(1000, 5000);
             Console.WriteLine("Foi gerado o processo " + this.Id);
         }
     }
+    #endregion
 
+    #region ProcessCentral
     public class ProcessCentral {
-        List<Process> FIFO { get; set; }
+        public static Queue<Process> FIFO = new Queue<Process>();
 
-        public ProcessCentral()
-        {
-            FIFO = new List<Process>();
-        }
         public void ShowFIFO() {
             Console.WriteLine("Showing FIFO List");
             foreach(Process pc in FIFO)  {
@@ -35,8 +35,8 @@ namespace SOSimulator
         {
             while (true)
             {
-                Process newProcess = new Process(1000);
-                FIFO.Add(newProcess);
+                Process newProcess = new Process();
+                FIFO.Enqueue(newProcess);
                 Console.WriteLine("O processo " + newProcess.Id + " foi adicionado ao FIFO");
                 if (FIFO.Count % 5 == 0)
                     ShowFIFO();
@@ -46,17 +46,26 @@ namespace SOSimulator
     }
 
 
-
+    #endregion
     public class Processor {
         public bool isBusy { get; set; }
         public int durationBusy { get; set; }
 
-        public void DoProcessorWork(Process process) {
+        public void DoProcessorWork() {
             while (true)
             {
-                isBusy = true;
-                durationBusy = process.duration;
-                Thread.Sleep(durationBusy);
+                if (ProcessCentral.FIFO.Count > 0)
+                {
+                    Process process = ProcessCentral.FIFO.Dequeue();
+                    Console.WriteLine("The process " + process.Id + " was dequeue with the duration " + process.duration);
+                    isBusy = true;
+                    durationBusy = process.duration;
+                    Thread.Sleep(durationBusy);
+                }
+                else {
+                    Console.WriteLine("The Queueu is empty");
+                    Thread.Sleep(2000);
+                }
             }
         }
 
@@ -69,9 +78,13 @@ namespace SOSimulator
         {
             ProcessCentral pg = new ProcessCentral();
             Thread GenerateProcess = new Thread(pg.GenerateProcessWork);
-            //GenerateProcess.IsBackground = false;
+           // GenerateProcess.IsBackground = true;
             GenerateProcess.Start();
-           
+            Processor pc = new Processor();
+            Thread Processor = new Thread(pc.DoProcessorWork);
+            Processor.IsBackground = true;
+            Processor.Start();
+                      
             
         }
 

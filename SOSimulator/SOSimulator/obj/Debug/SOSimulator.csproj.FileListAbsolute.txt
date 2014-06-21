@@ -4,3 +4,9 @@ c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\bi
 c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\obj\Debug\SOSimulator.csprojResolveAssemblyReference.cache
 c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\obj\Debug\SOSimulator.exe
 c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\obj\Debug\SOSimulator.pdb
+C:\workspace\ProcessorSimulator\SOSimulator\SOSimulator\bin\Debug\SOSimulator.exe.config
+C:\workspace\ProcessorSimulator\SOSimulator\SOSimulator\obj\Debug\SOSimulator.exe
+C:\workspace\ProcessorSimulator\SOSimulator\SOSimulator\obj\Debug\SOSimulator.pdb
+C:\workspace\ProcessorSimulator\SOSimulator\SOSimulator\bin\Debug\SOSimulator.exe
+C:\workspace\ProcessorSimulator\SOSimulator\SOSimulator\bin\Debug\SOSimulator.pdb
+C:\workspace\ProcessorSimulator\SOSimulator\SOSimulator\obj\Debug\SOSimulator.csprojResolveAssemblyReference.cache
