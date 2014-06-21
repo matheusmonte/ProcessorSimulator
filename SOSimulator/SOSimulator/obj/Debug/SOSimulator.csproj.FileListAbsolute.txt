@@ -1,0 +1,6 @@
+c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\bin\Debug\SOSimulator.exe.config
+c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\bin\Debug\SOSimulator.exe
+c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\bin\Debug\SOSimulator.pdb
+c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\obj\Debug\SOSimulator.csprojResolveAssemblyReference.cache
+c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\obj\Debug\SOSimulator.exe
+c:\users\mmonte\documents\visual studio 2013\Projects\SOSimulator\SOSimulator\obj\Debug\SOSimulator.pdb
