@@ -16,7 +16,7 @@ namespace SOSimulator
             Random rd = new Random();
             this.Id = rd.Next(0, 100);
             this.duration = rd.Next(1000, 5000);
-            Console.WriteLine("Foi gerado o processo " + this.Id);
+            Console.WriteLine("Has generate the process " + this.Id);
         }
     }
     #endregion
@@ -24,23 +24,58 @@ namespace SOSimulator
     #region ProcessCentral
     public class ProcessCentral {
         public static Queue<Process> FIFO = new Queue<Process>();
-
-        public void ShowFIFO() {
+        public static Queue<Process> RR = new Queue<Process>();
+        public void StartProcessing() {
+            ShowFIFO();
+            ShowRR();
+            Console.WriteLine("Press some key to start the processing");
+            Console.ReadLine();
+            Processor _pc = new Processor();
+            Thread Processor = new Thread(_pc.DoProcessorWork);
+            Processor.IsBackground = true;
+            Processor.Start();
+        }
+        public static void ShowFIFO() {
             Console.WriteLine("Showing FIFO List");
             foreach(Process pc in FIFO)  {
                 Console.WriteLine("Process -> " + pc.Id + " Duration ->" + pc.duration);
             }
+            
+
+        }
+        public static void ShowRR()
+        {
+            Console.WriteLine("Showing Round Robin List");
+            foreach (Process pc in RR)
+            {
+                Console.WriteLine("Process -> " + pc.Id + " Duration ->" + pc.duration);
+            }
+
+
         }
         public void GenerateProcessWork()
         {
+            int count = 0;
             while (true)
             {
-                Process newProcess = new Process();
-                FIFO.Enqueue(newProcess);
-                Console.WriteLine("O processo " + newProcess.Id + " foi adicionado ao FIFO");
-                if (FIFO.Count % 5 == 0)
-                    ShowFIFO();
-                Thread.Sleep(2000);
+                count++;
+                if (count < 6)
+                {
+                    Process newProcessFIFO = new Process();
+                    FIFO.Enqueue(newProcessFIFO);
+                    Console.WriteLine("The process " + newProcessFIFO.Id + " has been added to FIFO Queue");
+                    Thread.Sleep(1000);
+                    Process newProcessRR = new Process();
+                    RR.Enqueue(newProcessRR);
+                    Console.WriteLine("The process " + newProcessRR.Id + " has been added to Round Robin Queue");
+                    if (FIFO.Count % 5 == 0)
+                    {
+                        StartProcessing();
+                        Thread.Sleep(2000000);
+                    }
+
+                    Thread.Sleep(2000);
+                }
             }
         }
     }
@@ -50,24 +85,77 @@ namespace SOSimulator
     public class Processor {
         public bool isBusy { get; set; }
         public int durationBusy { get; set; }
-
+        public Process inProcessorNow { get; set;}
         public void DoProcessorWork() {
+            bool fifo = true;
+            int totalTimeRR = 0;
+             int totalDurationFIFO = 0;
             while (true)
             {
-                if (ProcessCentral.FIFO.Count > 0)
+                if (fifo)
                 {
-                    Process process = ProcessCentral.FIFO.Dequeue();
-                    Console.WriteLine("The process " + process.Id + " was dequeue with the duration " + process.duration);
-                    isBusy = true;
-                    durationBusy = process.duration;
-                    Thread.Sleep(durationBusy);
+                    if (ProcessCentral.FIFO.Count > 0)
+                    {
+                       
+                        if (inProcessorNow != null)
+                        {
+                            Console.WriteLine("The process " + inProcessorNow.Id + " has been out of process with his duration of " + inProcessorNow.duration);
+                            ProcessCentral.ShowFIFO();
+                        }
+                        Process process = ProcessCentral.FIFO.Dequeue();
+                        inProcessorNow = process;
+                        Console.WriteLine("The process " + process.Id + " was dequeue with the duration " + process.duration);
+                        isBusy = true;
+                        durationBusy = process.duration;
+                        totalDurationFIFO += durationBusy;
+                        Thread.Sleep(durationBusy);
+                    }
+                    else {
+                        fifo = false;
+
+                        Console.WriteLine("The FIFO Queueu is empty. Press some key to continue to process the Round Robin Queue...");
+                        Console.ReadLine();
+                    }
                 }
                 else {
-                    Console.WriteLine("The Queueu is empty");
-                    Thread.Sleep(2000);
+                    if (ProcessCentral.RR.Count > 0)
+                    {
+             
+                        if (inProcessorNow != null)
+                        {
+                            Console.WriteLine("The process " + inProcessorNow.Id + " has been out of process with his duration of " + inProcessorNow.duration);
+                            ProcessCentral.ShowRR();
+                        }
+                        Process process = ProcessCentral.RR.Dequeue();
+                        inProcessorNow = process;
+                        Console.WriteLine("The process " + process.Id + " was dequeue with the duration " + process.duration);
+                        isBusy = true;
+                        if (process.duration > 2000)
+                        {
+                            process.duration = process.duration - 2000;
+                            ProcessCentral.RR.Enqueue(process);
+                            totalTimeRR += 2000;
+                            Thread.Sleep(2000);
+                          
+                        }
+                        else
+                        {
+                            totalTimeRR += process.duration;
+                            Thread.Sleep(process.duration);
+                        }
+                    }
+                    else {
+                        Console.WriteLine("The FIFO and Round Robin Queue are empty.");
+                        Console.WriteLine("The FIFO total processing time was " + totalDurationFIFO.ToString() + " miliseconds");
+                        Console.WriteLine("The Round Robin total processing time was " + totalTimeRR + " miliseconds");
+                        Console.ReadLine();
+                        Environment.Exit(0);
+                    }
+
                 }
             }
         }
+        
 
     }
     public class Program
@@ -80,12 +168,8 @@ namespace SOSimulator
             Thread GenerateProcess = new Thread(pg.GenerateProcessWork);
            // GenerateProcess.IsBackground = true;
             GenerateProcess.Start();
-            Processor pc = new Processor();
-            Thread Processor = new Thread(pc.DoProcessorWork);
-            Processor.IsBackground = true;
-            Processor.Start();
-                      
             
+            Console.ReadLine();
         }
 
        
