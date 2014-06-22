@@ -11,6 +11,7 @@ namespace SOSimulator
     public class Process {
         public int duration { get; set; }
         public int Id { get; set; }
+        public int priority { get; set; }
         public Process() {
             
             Random rd = new Random();
@@ -28,8 +29,7 @@ namespace SOSimulator
         public void StartProcessing() {
             ShowFIFO();
             ShowRR();
-            Console.WriteLine("Press some key to start the processing");
-            Console.ReadLine();
+         
             Processor _pc = new Processor();
             Thread Processor = new Thread(_pc.DoProcessorWork);
             Processor.IsBackground = true;
@@ -63,11 +63,13 @@ namespace SOSimulator
                 {
                     Process newProcessFIFO = new Process();
                     FIFO.Enqueue(newProcessFIFO);
-                    Console.WriteLine("The process " + newProcessFIFO.Id + " has been added to FIFO Queue");
+                    newProcessFIFO.priority = 1;
+                    Console.WriteLine("The process " + newProcessFIFO.Id + " has been added to FIFO Queue because his priority is " + newProcessFIFO.priority);
                     Thread.Sleep(1000);
                     Process newProcessRR = new Process();
+                    newProcessRR.priority = 2;
                     RR.Enqueue(newProcessRR);
-                    Console.WriteLine("The process " + newProcessRR.Id + " has been added to Round Robin Queue");
+                    Console.WriteLine("The process " + newProcessRR.Id + " has been added to Round Robin Queue because his priority is " + newProcessRR.priority);
                     if (FIFO.Count % 5 == 0)
                     {
                         StartProcessing();
@@ -113,8 +115,7 @@ namespace SOSimulator
                     else {
                         fifo = false;
 
-                        Console.WriteLine("The FIFO Queueu is empty. Press some key to continue to process the Round Robin Queue...");
-                        Console.ReadLine();
+                        
                     }
                 }
                 else {
@@ -134,6 +135,7 @@ namespace SOSimulator
                         {
                             process.duration = process.duration - 2000;
                             ProcessCentral.RR.Enqueue(process);
+                            Console.WriteLine("The process " + process.Id + " has been enqueue again because his duration is biggest than the round");
                             totalTimeRR += 2000;
                             Thread.Sleep(2000);
                           
